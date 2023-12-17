@@ -1,0 +1,126 @@
+CREATE DATABASE UniversityDB;
+    USE UniversityDB;
+    CREATE TABLE Departments (
+      DepartmentID INT NOT NULL,
+      DepartmentName VARCHAR(100)
+  );
+  CREATE TABLE Professors (
+      ProfessorID INT NOT NULL,
+      FirstName VARCHAR(50),
+      LastName VARCHAR(50),
+      Age TINYINT,
+      DepartmentID INT,
+      Email VARCHAR(100)
+  );
+  
+  
+ALTER TABLE Departments ADD CONSTRAINT PK_Department PRIMARY KEY (DepartmentID);
+
+ALTER TABLE Professors ADD CONSTRAINT PK_Professor PRIMARY KEY (ProfessorID);
+ALTER TABLE Professors ADD CONSTRAINT UQ_Professor_Email UNIQUE (Email);
+  ALTER TABLE Professors ADD CONSTRAINT FK_Professor_Department  FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID);
+ALTER TABLE Professors ADD CONSTRAINT CK_Age CHECK (Age > = 20);
+ALTER TABLE Professors ALTER COLUMN FirstName VARCHAR(50) NOT NULL;
+ALTER TABLE Professors ALTER COLUMN LastName VARCHAR(50) NOT NULL;
+  
+ALTER TABLE Departments ADD CONSTRAINT DF_DepartmentName DEFAULT 'General' FOR DepartmentName;
+INSERT INTO Departments (DepartmentID) VALUES (1);
+  INSERT INTO Professors (ProfessorID, FirstName, LastName, Age, DepartmentID, Email) 
+  VALUES (1, 'John', 'Smith', 57, 1, 'john.smith@university.com');
+  INSERT INTO Professors (ProfessorID, FirstName, LastName, DepartmentID, Email) 
+  VALUES (2, 'Jane', 'Doe', 1, 35, 'john.smith@university.com'); -- Це викличе помилку через UNIQUE обмеження
+  INSERT INTO Professors (ProfessorID, FirstName, LastName, DepartmentID, Email) 
+  VALUES (3, 'Bob', 'Doe', 1, 18, 'bob@university.com'); -- Це викличе помилку через CHECK обмеження
+  
+  DROP TABLE Professors;
+  DROP TABLE Departments;
+  
+  DROP DATABASE UniversityDB;
+
+    CREATE DATABASE CompanyDB;
+  USE CompanyDB;
+  CREATE TABLE Employees (
+      EmployeeID INT PRIMARY KEY,
+      FirstName VARCHAR(50) NOT NULL,
+      LastName VARCHAR(50) NOT NULL,
+      Email VARCHAR(100) UNIQUE,
+      Position VARCHAR(50) DEFAULT 'Junior Developer'
+  );
+
+  
+  CREATE TABLE Departments (
+      DepartmentID INT PRIMARY KEY,
+      DepartmentName VARCHAR(100) NOT NULL CHECK (DepartmentName <> ''),
+      Budget DECIMAL(10, 2) CHECK (Budget > 0),
+      DefaultRoomNumber INT DEFAULT 101
+  );
+  CREATE TABLE Assignments (
+      AssignmentID INT PRIMARY KEY,
+      EmployeeID INT NOT NULL,
+      DepartmentID INT NOT NULL,
+      AssignmentDate DATE DEFAULT GETDATE(),
+      FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID),
+      FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID)
+  );
+
+  INSERT INTO Departments (DepartmentID, DepartmentName, Budget) 
+  VALUES (1, 'Human Resources', 50000);
+  
+  INSERT INTO Employees (EmployeeID, FirstName, LastName, Email) 
+  VALUES (1, 'John', 'Smith', 'john.smith@company.com');
+  
+  INSERT INTO Assignments (AssignmentID, EmployeeID, DepartmentID) 
+  VALUES (1, 1, 1);
+  
+  INSERT INTO Assignments (AssignmentID, EmployeeID, DepartmentID) 
+  VALUES (2, 999, 1);
+  
+  DROP TABLE Assignments;
+  DROP TABLE Employees;
+  DROP TABLE Departments;
+  DROP DATABASE CompanyDB;
+
+ 
+ -- 1 PRIMARY KEY (первинний ключ):
+--Обмеження PRIMARY KEY визначає унікальні значення у колонці або групі колонок в таблиці. Два основні умови, які воно забезпечує:
+ --Унікальність: Кожен рядок має унікальне значення в полі (або групі полів), яке визначено як PRIMARY KEY.
+ --Не null: Значення PRIMARY KEY не може бути NULL, тобто кожен рядок повинен мати значення для цього поля.
+--2 CREATE TABLE Students (
+  --  StudentID INT PRIMARY KEY,
+    --FirstName VARCHAR(50),
+    --LastName VARCHAR(50)
+--);
+--3 Якщо ви спробуєте вставити дані, які порушують FOREIGN KEY обмеження, ви отримаєте помилку, оскільки це порушить зв'язок між таблицями.
+--4 FOREIGN KEY встановлює зв'язок між полем (або групою полів) в одній таблиці і PRIMARY KEY або UNIQUE KEY у іншій таблиці, забезпечуючи цілісність даних між ними.
+--5  UNIQUE обмеження гарантує унікальність значень у колонці (або групі колонок), але, на відміну від PRIMARY KEY, дозволяє мати NULL значення.
+--
+-- 6 Приклад коду T-SQL для обмеження CHECK:
+--CREATE TABLE Mytable (
+  --  ProductID INT PRIMARY KEY,
+    --Price MONEY CHECK (Price > 0)
+--);
+--7 DEFAULT обмеження при створенні нової таблиці:
+--CREATE TABLE Order (
+  --  OrderID INT PRIMARY KEY,
+    --OrderDate DATE DEFAULT GETDATE() -- Встановлює поточну дату за замовчуванням
+--8 Унікальне обмеження для колонки Email: UNIQUE (Email);
+--9 Зміна або видалення обмеження:
+--Зміна: ALTER TABLE TableName DROP CONSTRAINT ConstraintName;
+--Видалення: DROP TABLE TableName;
+--Важливість обмежень цілісності даних:
+--10 Запобігають помилковим або неправильним даним.
+  --   Забезпечують консистентність інформації в базі даних.
+    -- Захищають цілісність зв'язків між таблицями.
+--11 NOT NULL vs CHECK обмеження:
+--NOT NULL: Вимагає, щоб значення в колонці не було NULL.
+--CHECK: Дозволяє вказати складне умову для допустимих значень у колонці.
+--12 Модифікація обмеження DEFAULT:
+--CREATE TABLE Orders (
+  --  OrderID INT PRIMARY KEY,
+    --OrderDate DATE DEFAULT GETDATE()
+--);
+--
+--13 Каскадні операції в FOREIGN KEY обмеженнях.
+--Каскадні операції визначають, які дії виконуються при оновленні або видаленні запису, на який посилається зовнішній ключ. Наприклад, CASCADE оновлює або видаляє відповідні записи в дочірній таблиці.
+--
+--
